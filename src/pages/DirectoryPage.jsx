@@ -71,7 +71,22 @@ const DirectoryPage = memo(() => {
           >
             <Filter size={14} /> Filters
           </button>
-          <button onClick={() => window.alert('Export coming soon')}
+          <button onClick={() => {
+              const headers = ['Name','State','LGA','Ward','Type','Status','Total Visits','Outpatient','Inpatient','ANC','Deliveries','Immunisations','Referrals','Staff','Satisfaction (%)','Drug Stock (%)'];
+              const rows = filtered.map(p => [
+                p.name, p.state, p.lga, p.ward, p.type, p.status,
+                p.visits.total, p.visits.outpatient, p.visits.inpatient, p.visits.anc,
+                p.deliveries, p.immunisations, p.referrals, p.staffCount,
+                p.satisfactionScore, p.drugStockLevel,
+              ]);
+              const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+              const blob = new Blob([csv], { type: 'text/csv' });
+              const a = document.createElement('a');
+              a.download = `PHC_Directory_${selectedState || 'All'}.csv`;
+              a.href = URL.createObjectURL(blob);
+              a.click();
+              URL.revokeObjectURL(a.href);
+            }}
             className="btn-glow px-[18px] py-2.5 border-none rounded-xl text-[13px] font-semibold cursor-pointer font-dm flex items-center gap-1.5"
             style={{ background: COLORS.cyan, color: '#060B18' }}
           >
